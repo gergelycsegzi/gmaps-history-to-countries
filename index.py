@@ -89,12 +89,13 @@ if args.country:
     if verbose:
         print("Flattening into trips originating from origin country")
     trips_from_country = []
+    departure = ''
     for index, travel in enumerate(international_movements):
         if travel['origin'] == args.country:
             departure = travel['timestamp']
             destination = travel['destination']
 
-        if (travel['destination'] == args.country) and departure:
+        if (travel['destination'] == args.country) and (len(departure) > 0):
             trips_from_country.append({
                 "departure": departure,
                 "return": travel['timestamp'],
