@@ -27,7 +27,6 @@ if verbose:
 
 records = json.load(open(args.input))
 locations = records["locations"]
-
 coordinates = []
 
 timestamp = parse(locations[0]['timestamp'])
@@ -86,6 +85,24 @@ while index < len(timestamp_to_country):
     if verbose and (index % 1000 == 0):
         print("Progress: processed " + str(index) + " / " + str(len(timestamp_to_country)))
 
+if args.country:
+    if verbose:
+        print("Flattening into trips originating from origin country")
+    trips_from_country = []
+    for index, travel in enumerate(international_movements):
+        if travel['origin'] == args.country:
+            departure = travel['timestamp']
+            destination = travel['destination']
+
+        if (travel['destination'] == args.country) and departure:
+            trips_from_country.append({
+                "departure": departure,
+                "return": travel['timestamp'],
+                "destination": destination
+            })         
+    to_write = trips_from_country
+else:
+    to_write = international_movements
 
 with open(args.output, 'w', encoding='utf-8') as f:
-    json.dump(international_movements, f, ensure_ascii=False, indent=4)
+    json.dump(to_write, f, ensure_ascii=False, indent=4)
