@@ -35,13 +35,14 @@ filtered_locations = []
 for location in locations:
     timestamp = parse(location['timestamp'])
     seconds_from_last_point = (timestamp - previous_timestamp).total_seconds()
-    is_accurate = int(location['accuracy']) < 200
-    if (seconds_from_last_point > event_filter_window_in_seconds) and is_accurate:
-        lat = location['latitudeE7']/1e7
-        long = location['longitudeE7']/1e7
-        coordinates.append((lat, long))
-        filtered_locations.append(location)
-        previous_timestamp = timestamp
+    if('accuracy' in location): 
+        is_accurate = int(location['accuracy']) < 200
+        if (seconds_from_last_point > event_filter_window_in_seconds) and is_accurate:
+            lat = location['latitudeE7']/1e7
+            long = location['longitudeE7']/1e7
+            coordinates.append((lat, long))
+            filtered_locations.append(location)
+            previous_timestamp = timestamp
 
 if verbose:
     print("Progress: Loaded " + str(len(coordinates)) + " location points")
